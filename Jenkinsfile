@@ -48,25 +48,25 @@ pipeline {
     }
 
     post {
-        always {
-            echo 'CI/CD and security scanning process completed.'
-        }
 
         success {
-            echo 'Pipeline executed successfully.'
+            emailext(
+                subject: "SUCCESS: Jenkins Build ${env.BUILD_NUMBER}",
+                body: "Build completed successfully.",
+                to: "vidhipatel20112@gmail.com"
+            )
         }
 
         failure {
-            echo 'Pipeline execution failed.'
+            emailext(
+                subject: "FAILED: Jenkins Build ${env.BUILD_NUMBER}",
+                body: "Build failed. Check Jenkins console.",
+                to: "vidhipatel20112@gmail.com"
+            )
         }
-    }
-}
-post {
-    always {
-        emailext(
-            subject: "Jenkins Build: ${currentBuild.currentResult}",
-            body: "Build completed. Check Jenkins console output.",
-            to: "vidhipatel20112@gmail.com"
-        )
+
+        always {
+            echo 'CI/CD and security scanning process completed.'
+        }
     }
 }
