@@ -39,7 +39,9 @@ pipeline {
 
                 withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
 
-                    bat 'sonar-scanner'
+                    bat '''
+                    C:\\sonar-scanner-cli-8.0.1.6346-windows-x64\\sonar-scanner-8.0.1.6346-windows-x64\\bin\\sonar-scanner.bat
+                    '''
                 }
             }
         }
