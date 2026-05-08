@@ -61,3 +61,12 @@ pipeline {
         }
     }
 }
+post {
+    always {
+        emailext(
+            subject: "Jenkins Build: ${currentBuild.currentResult}",
+            body: "Build completed. Check Jenkins console output.",
+            to: "vidhipatel20112@gmail.com"
+        )
+    }
+}
