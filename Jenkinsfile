@@ -34,6 +34,22 @@ pipeline {
             }
         }
 
+        stage('SonarCloud Analysis') {
+            steps {
+
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+
+                    bat '''
+                    curl -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.0.0.4432-windows.zip
+
+                    powershell -Command "Expand-Archive sonar-scanner.zip -DestinationPath ."
+
+                    sonar-scanner-6.0.0.4432-windows\\bin\\sonar-scanner.bat
+                    '''
+                }
+            }
+        }
+
         stage('Generate Security Report') {
             steps {
                 echo 'Generating security report...'
@@ -52,16 +68,29 @@ pipeline {
         success {
             emailext(
                 subject: "SUCCESS: Jenkins Build ${env.BUILD_NUMBER}",
-                body: "Build completed successfully.",
-                to: "vidhipatel20112@gmail.com"
+                body: """
+                Jenkins pipeline completed successfully.
+
+                Project: ${env.JOB_NAME}
+                Build Number: ${env.BUILD_NUMBER}
+                Build URL: ${env.BUILD_URL}
+                """,
+                to: "vidhipatel20112@gmail.com",
+                attachLog: true
             )
         }
 
         failure {
             emailext(
                 subject: "FAILED: Jenkins Build ${env.BUILD_NUMBER}",
-                body: "Build failed. Check Jenkins console.",
-                to: "vidhipatel20112@gmail.com"
+                body: """
+                Jenkins pipeline failed.
+
+                Check console output:
+                ${env.BUILD_URL}
+                """,
+                to: "vidhipatel20112@gmail.com",
+                attachLog: true
             )
         }
 
